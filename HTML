@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>3 en Línea</title>
+    <style>
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-gap: 5px;
+            text-align: center;
+        }
+
+        .cell {
+            width: 100px;
+            height: 100px;
+            font-size: 24px;
+            border: 2px solid #333;
+            cursor: pointer;
+        }
+
+        .cell:hover {
+            background-color: lightgray;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center; color:blue;">3 en Línea</h1>
+    <div class="board" id="board"></div>
+    <p id="message"></p>
+
+    <script>
+        const board = document.getElementById("board");
+        const message = document.getElementById("message");
+        let currentPlayer = "X";
+        const cells = new Array(9).fill(null);
+
+        for (let i = 0; i < 9; i++) {
+            const cell = document.createElement("div");
+            cell.className = "cell";
+            cell.addEventListener("click", () => makeMove(i));
+            board.appendChild(cell);
+        }
+
+        function makeMove(cellIndex) {
+            if (cells[cellIndex] === null) {
+                cells[cellIndex] = currentPlayer;
+                board.children[cellIndex].textContent = currentPlayer;
+                if (checkWin()) {
+                    message.textContent = `¡${currentPlayer} ha ganado!`;
+                    disableCells();
+                } else if (cells.every((cell) => cell !== null)) {
+                    message.textContent = "Empate";
+                } else {
+                    currentPlayer = currentPlayer === "X" ? "O" : "X";
+                    message.textContent = `Turno de ${currentPlayer}`;
+                }
+            }
+        }
+
+        function checkWin() {
+            const winPatterns = [
+                [0, 1, 2],
+                [3, 4, 5],
+                [6, 7, 8],
+                [0, 3, 6],
+                [1, 4, 7],
+                [2, 5, 8],
+                [0, 4, 8],
+                [2, 4, 6]
+            ];
+
+            for (const pattern of winPatterns) {
+                const [a, b, c] = pattern;
+                if (cells[a] && cells[a] === cells[b] && cells[a] === cells[c]) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        function disableCells() {
+            for (const cell of board.children) {
+                cell.style.pointerEvents = "none";
+            }
+        }
+    </script>
+</body>
+</html>
